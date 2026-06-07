@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ev-battery-prediction:latest
+    container_name: ev-battery-app
+    ports:
+      - "8501:8501"
+    volumes:
+      # Mount logs directory so container logs persist on the host
+      - ./logs:/app/logs
+    environment:
+      - LOG_LEVEL=INFO
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
